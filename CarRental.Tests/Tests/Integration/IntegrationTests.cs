@@ -8,6 +8,7 @@ using CarRental.Domain.QueryHandlers;
 using CarRental.Domain.Services;
 using CarRental.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
 using Xunit.Abstractions;
 
@@ -34,9 +35,11 @@ public class IntegrationTests
 
         var repository = new InMemoryRentalRepository();
 
+        // Start rental
         var startCommand = CreateStartRentalCommand(rentalNumber, rentalStart);
         var startValidator = new StartRentalCommandValidator(timeProvider);
-        var startHandler = new StartRentalCommandHandler(repository, startValidator);
+        var startHandler = new StartRentalCommandHandler(
+            NullLogger<StartRentalCommandHandler>.Instance, repository, startValidator);
         var result = await startHandler.Handle(startCommand);
 
         if (!result.Success)
@@ -45,9 +48,11 @@ public class IntegrationTests
         }
         result.Success.Should().BeTrue();
 
+        // End rental
         var endCommand = CreateEndRentalCommand(rentalNumber, rentalEnd);
         var endValidator = new EndRentalCommandValidator(timeProvider);
-        var endHandler = new EndRentalCommandHandler(repository, endValidator);
+        var endHandler = new EndRentalCommandHandler(
+            NullLogger<EndRentalCommandHandler>.Instance, repository, endValidator);
         var result2 = await endHandler.Handle(endCommand);
 
         if (!result2.Success)
@@ -56,12 +61,15 @@ public class IntegrationTests
         }
         result2.Success.Should().BeTrue();
 
+        // Get data for pricing
         var query = new RentalForPricingQuery(rentalNumber);
-        var queryHandler = new RentalForPricingQueryHandler(repository);
+        var queryHandler = new RentalForPricingQueryHandler(
+            NullLogger<RentalForPricingQueryHandler>.Instance, repository);
         var queryResult = await queryHandler.Handle(query);
         queryResult.Success.Should().BeTrue();
         var rentalForPricing = queryResult.Result!;
 
+        // Calculate price
         var calculator = new RentalPriceCalculator();
         var priceConfiguration = new RentalPriceConfiguration(2, 3);
         var price = calculator.Calculate(rentalForPricing, priceConfiguration);

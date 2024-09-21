@@ -6,6 +6,7 @@ using CarRental.Domain.Persistence.Models;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace CarRental.Tests.Tests.CommandHandlers;
@@ -15,9 +16,10 @@ public class EndRentalCommandHandlerTests
     [Fact]
     public async void When_CommandIsValid_And_RentalIsFound_Should_ReturnSuccess()
     {
+        var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var validator = Substitute.For<IValidator<EndRentalCommand>>();
-        var handler = new EndRentalCommandHandler(repository, validator);
+        var handler = new EndRentalCommandHandler(logger, repository, validator);
 
         repository.GetByRentalNumber(null!)
             .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, DateTime.MinValue, DateTime.MinValue, 0, 0));
@@ -31,9 +33,10 @@ public class EndRentalCommandHandlerTests
     [Fact]
     public async void When_CommandNotValid_Should_ReturnFailureWithErrors()
     {
+        var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var validator = Substitute.For<IValidator<EndRentalCommand>>();
-        var handler = new EndRentalCommandHandler(repository, validator);
+        var handler = new EndRentalCommandHandler(logger, repository, validator);
 
         validator.ValidateAsync(null!)
             .ReturnsForAnyArgs(new ValidationResult(new List<ValidationFailure> { new("prop", "message") }));
@@ -53,9 +56,10 @@ public class EndRentalCommandHandlerTests
         const decimal mileageAtStart = 10;
         const decimal mileageAtEnd = 20;
 
+        var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var validator = Substitute.For<IValidator<EndRentalCommand>>();
-        var handler = new EndRentalCommandHandler(repository, validator);
+        var handler = new EndRentalCommandHandler(logger, repository, validator);
 
         repository.GetByRentalNumber(null!)
             .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, timeAtStart, null, mileageAtStart, null));
@@ -76,9 +80,10 @@ public class EndRentalCommandHandlerTests
         const decimal mileageAtStart = 10;
         const decimal mileageAtEnd = 5; // Smaller than mileage at start = invalid
 
+        var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var validator = Substitute.For<IValidator<EndRentalCommand>>();
-        var handler = new EndRentalCommandHandler(repository, validator);
+        var handler = new EndRentalCommandHandler(logger, repository, validator);
 
         repository.GetByRentalNumber(null!)
             .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, timeAtStart, null, mileageAtStart, null));

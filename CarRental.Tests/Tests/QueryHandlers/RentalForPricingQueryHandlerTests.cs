@@ -4,6 +4,8 @@ using CarRental.Domain.Queries;
 using CarRental.Domain.QueryHandlers;
 using CarRental.Tests.Helpers;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 
 namespace CarRental.Tests.Tests.QueryHandlers;
 
@@ -16,13 +18,14 @@ public class RentalForPricingQueryHandlerTests
         const decimal mileageAtStart = 1.1m;
         const decimal mileageAtEnd = 10.3m;
 
+        var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = new InMemoryRentalRepository();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
             null, mileageAtStart, mileageAtEnd);
         await repository.Add(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);
-        var queryHandler = new RentalForPricingQueryHandler(repository);
+        var queryHandler = new RentalForPricingQueryHandler(logger, repository);
 
         var result = await queryHandler.Handle(query);
 
@@ -35,13 +38,14 @@ public class RentalForPricingQueryHandlerTests
         const string rentalNumber = "rental number";
         const decimal mileageAtStart = 1.1m;
 
+        var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = new InMemoryRentalRepository();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
             DateTime.MinValue, mileageAtStart, null);
         await repository.Add(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);
-        var queryHandler = new RentalForPricingQueryHandler(repository);
+        var queryHandler = new RentalForPricingQueryHandler(logger,repository);
 
         var result = await queryHandler.Handle(query);
 
@@ -55,13 +59,14 @@ public class RentalForPricingQueryHandlerTests
         const decimal mileageAtStart = 1.1m;
         const decimal mileageAtEnd = 10.3m;
 
+        var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = new InMemoryRentalRepository();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
             DateTime.MinValue, mileageAtStart, mileageAtEnd);
         await repository.Add(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);
-        var queryHandler = new RentalForPricingQueryHandler(repository);
+        var queryHandler = new RentalForPricingQueryHandler(logger, repository);
 
         var result = await queryHandler.Handle(query);
 
@@ -79,12 +84,13 @@ public class RentalForPricingQueryHandlerTests
         var startDate = DateTime.Parse(start);
         var endDate = DateTime.Parse(end);
 
+        var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = new InMemoryRentalRepository();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, startDate, endDate, 0, 0);
         await repository.Add(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);
-        var queryHandler = new RentalForPricingQueryHandler(repository);
+        var queryHandler = new RentalForPricingQueryHandler(logger, repository);
 
         var result = await queryHandler.Handle(query);
 

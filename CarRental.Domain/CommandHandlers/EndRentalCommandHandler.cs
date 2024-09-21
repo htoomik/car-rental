@@ -2,34 +2,46 @@ using CarRental.Domain.Commands;
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Persistence.Models;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace CarRental.Domain.CommandHandlers;
 
-public class EndRentalCommandHandler(IRentalRepository repository, IValidator<EndRentalCommand> validator)
+public class EndRentalCommandHandler(
+    ILogger<EndRentalCommandHandler> logger,
+    IRentalRepository repository,
+    IValidator<EndRentalCommand> validator)
 {
     public async Task<ExecutionResult> Handle(EndRentalCommand command)
     {
-        var validationResult = await validator.ValidateAsync(command);
-
-        if (!validationResult.IsValid)
+        try
         {
-            return ExecutionResult.ForFailure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+            var validationResult = await validator.ValidateAsync(command);
+
+            if (!validationResult.IsValid)
+            {
+                return ExecutionResult.ForFailure(validationResult.Errors.Select(e => e.ErrorMessage).ToList());
+            }
+
+            var rental = await repository.GetByRentalNumber(command.RentalNumber);
+
+            rental.TimeAtEnd = command.Timestamp;
+            rental.MileageAtEnd = command.Mileage;
+
+            var isValid = Validate(command, rental, out var errors);
+            if (!isValid)
+            {
+                return ExecutionResult.ForFailure(errors);
+            }
+
+            await repository.Update(rental);
+
+            return ExecutionResult.ForSuccess();
         }
-
-        var rental = await repository.GetByRentalNumber(command.RentalNumber);
-
-        rental.TimeAtEnd = command.Timestamp;
-        rental.MileageAtEnd = command.Mileage;
-
-        var isValid = Validate(command, rental, out var errors);
-        if (!isValid)
+        catch (Exception ex)
         {
-            return ExecutionResult.ForFailure(errors);
+            logger.LogError(ex, "Error handling end of rental");
+            return ExecutionResult.ForFailure([ex.Message]);
         }
-
-        await repository.Update(rental);
-
-        return ExecutionResult.ForSuccess();
     }
 
     private static bool Validate(EndRentalCommand command, Rental rental, out List<string> errors)
