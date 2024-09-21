@@ -14,3 +14,8 @@
 ## Choices to document/explain
 
 - rental number vs guid
+
+## To discuss with client
+
+- more detailed data validation rules
+- data structure for errors: error codes & translations of error messages
