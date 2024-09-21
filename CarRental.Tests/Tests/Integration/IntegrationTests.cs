@@ -6,6 +6,7 @@ using CarRental.Domain.Configuration;
 using CarRental.Domain.Queries;
 using CarRental.Domain.QueryHandlers;
 using CarRental.Domain.Services;
+using CarRental.Domain.Services.PricingStrategies;
 using CarRental.Tests.Tests.Integration.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -30,10 +31,18 @@ public class IntegrationTests
         const string rentalStart = "2024-09-01 09:00";
         const string rentalEnd = "2024-09-02 11:00";
 
+        // Dependencies - these would be provided by a service provider in a real implementation
         var timeProvider = new FakeTimeProvider();
         timeProvider.SetUtcNow(new DateTimeOffset(2024, 09, 02, 13, 0, 0, TimeSpan.Zero));
 
         var repository = new InMemoryRentalRepository();
+
+        var pricingStrategies = new List<IPricingStrategy>
+        {
+            new SmallStrategy(),
+            new StationWagonStrategy(),
+            new TruckStrategy()
+        };
 
         // Start rental
         var startCommand = CreateStartRentalCommand(rentalNumber, rentalStart);
@@ -70,7 +79,7 @@ public class IntegrationTests
         var rentalForPricing = queryResult.Result!;
 
         // Calculate price
-        var calculator = new RentalPriceCalculator();
+        var calculator = new RentalPriceCalculator(pricingStrategies);
         var priceConfiguration = new RentalPriceConfiguration(2, 3);
         var price = calculator.Calculate(rentalForPricing, priceConfiguration);
 

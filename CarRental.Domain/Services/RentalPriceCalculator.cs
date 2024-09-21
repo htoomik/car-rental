@@ -1,43 +1,27 @@
 using CarRental.Domain.Configuration;
 using CarRental.Domain.QueryResults;
+using CarRental.Domain.Services.PricingStrategies;
 
 namespace CarRental.Domain.Services;
 
-public class RentalPriceCalculator
+public class RentalPriceCalculator(IEnumerable<IPricingStrategy> strategies)
 {
-    private readonly Dictionary<CarCategory, Func<RentalForPricing, RentalPriceConfiguration, decimal>> _mapping = new()
-    {
-        { CarCategory.Small, ForSmall },
-        { CarCategory.StationWagon, ForStationWagon },
-        { CarCategory.Truck, ForTruck }
-    };
-
     public decimal Calculate(RentalForPricing rental, RentalPriceConfiguration configuration)
     {
         var category = rental.Category;
 
-        if (!_mapping.TryGetValue(category, out var pricingFunction))
+        var applicableStrategies = strategies.Where(s => s.IsApplicable(category)).ToList();
+
+        if (!applicableStrategies.Any())
         {
-            throw new Exception("Unknown car category " + category);
+            throw new Exception($"No applicable pricing strategy found for {category}");
         }
 
-        return pricingFunction(rental, configuration);
-    }
+        if (applicableStrategies.Count> 1)
+        {
+            throw new Exception($"Multiple applicable pricing strategies found for {category}");
+        }
 
-    private static decimal ForSmall(RentalForPricing rental, RentalPriceConfiguration configuration)
-    {
-        return configuration.BaseDailyRate * rental.Days;
-    }
-
-    private static decimal ForStationWagon(RentalForPricing rental, RentalPriceConfiguration configuration)
-    {
-        return configuration.BaseDailyRate * rental.Days * 1.3m +
-               configuration.BaseMileageRate * rental.Mileage;
-    }
-
-    private static decimal ForTruck(RentalForPricing rental, RentalPriceConfiguration configuration)
-    {
-        return configuration.BaseDailyRate * rental.Days * 1.5m +
-               configuration.BaseMileageRate * rental.Mileage * 1.5m;
+        return applicableStrategies.Single().Calculate(rental, configuration);
     }
 }

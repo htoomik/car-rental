@@ -2,19 +2,27 @@ using CarRental.Domain;
 using CarRental.Domain.Configuration;
 using CarRental.Domain.QueryResults;
 using CarRental.Domain.Services;
+using CarRental.Domain.Services.PricingStrategies;
 using FluentAssertions;
 
 namespace CarRental.Tests.Tests.Services;
 
 public class RentalPriceCalculatorTests
 {
+    private static readonly List<IPricingStrategy> Strategies =
+    [
+        new SmallStrategy(),
+        new StationWagonStrategy(),
+        new TruckStrategy()
+    ];
+
     [Theory]
     [InlineData(2, 3, 6)]
     public void SmallCar(decimal baseDailyRate, int days, decimal expected)
     {
         var rental = new RentalForPricing(CarCategory.Small, 0, days);
         var config = new RentalPriceConfiguration(baseDailyRate, 0);
-        var calculator = new RentalPriceCalculator();
+        var calculator = new RentalPriceCalculator(Strategies);
 
         var result = calculator.Calculate(rental, config);
 
@@ -27,7 +35,7 @@ public class RentalPriceCalculatorTests
     {
         var rental = new RentalForPricing(CarCategory.StationWagon, mileage, days);
         var config = new RentalPriceConfiguration(baseDailyRate, baseMileageRate);
-        var calculator = new RentalPriceCalculator();
+        var calculator = new RentalPriceCalculator(Strategies);
 
         var result = calculator.Calculate(rental, config);
 
@@ -40,7 +48,7 @@ public class RentalPriceCalculatorTests
     {
         var rental = new RentalForPricing(CarCategory.Truck, mileage, days);
         var config = new RentalPriceConfiguration(baseDailyRate, baseMileageRate);
-        var calculator = new RentalPriceCalculator();
+        var calculator = new RentalPriceCalculator(Strategies);
 
         var result = calculator.Calculate(rental, config);
 
