@@ -5,7 +5,7 @@ using CarRental.Domain.QueryHandlers;
 using CarRental.Tests.Helpers;
 using FluentAssertions;
 
-namespace CarRental.Tests.Tests;
+namespace CarRental.Tests.Tests.QueryHandlers;
 
 public class RentalForPricingQueryHandlerTests
 {

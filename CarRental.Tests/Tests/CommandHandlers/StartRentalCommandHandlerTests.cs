@@ -7,7 +7,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using NSubstitute;
 
-namespace CarRental.Tests.Tests;
+namespace CarRental.Tests.Tests.CommandHandlers;
 
 public class StartRentalCommandHandlerTests
 {

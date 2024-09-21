@@ -4,7 +4,7 @@ using CarRental.Domain.CommandValidators;
 using FluentAssertions;
 using Xunit.Abstractions;
 
-namespace CarRental.Tests.Tests;
+namespace CarRental.Tests.Tests.CommandValidators;
 
 public class StartRentalCommandValidatorTests
 {

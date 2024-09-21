@@ -11,7 +11,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Time.Testing;
 using Xunit.Abstractions;
 
-namespace CarRental.Tests.Tests;
+namespace CarRental.Tests.Tests.Integration;
 
 public class IntegrationTests
 {

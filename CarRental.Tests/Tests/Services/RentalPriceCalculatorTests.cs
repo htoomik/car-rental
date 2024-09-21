@@ -4,7 +4,7 @@ using CarRental.Domain.QueryResults;
 using CarRental.Domain.Services;
 using FluentAssertions;
 
-namespace CarRental.Tests.Tests;
+namespace CarRental.Tests.Tests.Services;
 
 public class RentalPriceCalculatorTests
 {
