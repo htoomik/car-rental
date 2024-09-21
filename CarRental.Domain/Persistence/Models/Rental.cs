@@ -8,9 +8,9 @@ public class Rental
     public string ClientIdentifier { get; }
     public CarCategory Category { get; }
     public DateTime TimeAtStart { get; }
-    public DateTime TimeAtEnd { get; set; }
+    public DateTime? TimeAtEnd { get; set; }
     public decimal MileageAtStart { get; }
-    public decimal MileageAtEnd { get; set; }
+    public decimal? MileageAtEnd { get; set; }
 
     public Rental(
         string rentalNumber,
@@ -34,9 +34,9 @@ public class Rental
         string clientIdentifier,
         CarCategory category,
         DateTime timeAtStart,
-        DateTime timeAtEnd,
+        DateTime? timeAtEnd,
         decimal mileageAtStart,
-        decimal mileageAtEnd)
+        decimal? mileageAtEnd)
     {
         RentalNumber = rentalNumber;
         RegistrationNumber = registrationNumber;

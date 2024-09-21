@@ -6,13 +6,27 @@ namespace CarRental.Domain.QueryHandlers;
 
 public class RentalForPricingQueryHandler(IRentalRepository repository)
 {
-    public async Task<RentalForPricing> Handle(RentalForPricingQuery query)
+    public async Task<ExecutionResult<RentalForPricing>> Handle(RentalForPricingQuery query)
     {
         var rental = await repository.GetByRentalNumber(query.RentalNumber);
 
-        var mileage = rental.MileageAtEnd - rental.MileageAtStart;
-        var days = rental.TimeAtEnd.Date.Subtract(rental.TimeAtStart.Date).Days + 1;
+        if (rental.TimeAtEnd == null)
+        {
+            return ExecutionResult<RentalForPricing>.ForFailure(
+                ["Rental end time must be set before calculating price"]);
+        }
 
-        return new RentalForPricing(rental.Category, mileage, days);
+        if (rental.MileageAtEnd == null)
+        {
+            return ExecutionResult<RentalForPricing>.ForFailure(
+                ["Rental end mileage must be set before calculating price"]);
+        }
+
+        var mileage = rental.MileageAtEnd.Value - rental.MileageAtStart;
+        var days = rental.TimeAtEnd.Value.Date.Subtract(rental.TimeAtStart.Date).Days + 1;
+
+        var result = new RentalForPricing(rental.Category, mileage, days);
+
+        return ExecutionResult<RentalForPricing>.ForSuccess(result);
     }
 }

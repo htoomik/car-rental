@@ -58,7 +58,9 @@ public class IntegrationTests
 
         var query = new RentalForPricingQuery(rentalNumber);
         var queryHandler = new RentalForPricingQueryHandler(repository);
-        var rentalForPricing = await queryHandler.Handle(query);
+        var queryResult = await queryHandler.Handle(query);
+        queryResult.Success.Should().BeTrue();
+        var rentalForPricing = queryResult.Result!;
 
         var calculator = new RentalPriceCalculator();
         var priceConfiguration = new RentalPriceConfiguration(2, 3);

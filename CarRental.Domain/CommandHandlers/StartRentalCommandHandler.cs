@@ -1,11 +1,11 @@
 using CarRental.Domain.Commands;
-using CarRental.Domain.CommandValidators;
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Persistence.Models;
+using FluentValidation;
 
 namespace CarRental.Domain.CommandHandlers;
 
-public class StartRentalCommandHandler(IRentalRepository repository, StartRentalCommandValidator validator)
+public class StartRentalCommandHandler(IRentalRepository repository, IValidator<StartRentalCommand> validator)
 {
     public async Task<ExecutionResult> Handle(StartRentalCommand command)
     {

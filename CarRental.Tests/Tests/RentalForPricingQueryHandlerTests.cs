@@ -10,6 +10,45 @@ namespace CarRental.Tests.Tests;
 public class RentalForPricingQueryHandlerTests
 {
     [Fact]
+    public async Task When_EndTimeMissing_Should_ReturnFailure()
+    {
+        const string rentalNumber = "rental number";
+        const decimal mileageAtStart = 1.1m;
+        const decimal mileageAtEnd = 10.3m;
+
+        var repository = new InMemoryRentalRepository();
+        var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
+            null, mileageAtStart, mileageAtEnd);
+        await repository.Add(rental);
+
+        var query = new RentalForPricingQuery(rentalNumber);
+        var queryHandler = new RentalForPricingQueryHandler(repository);
+
+        var result = await queryHandler.Handle(query);
+
+        result.Success.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task When_EndMileageMissing_Should_ReturnFailure()
+    {
+        const string rentalNumber = "rental number";
+        const decimal mileageAtStart = 1.1m;
+
+        var repository = new InMemoryRentalRepository();
+        var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
+            DateTime.MinValue, mileageAtStart, null);
+        await repository.Add(rental);
+
+        var query = new RentalForPricingQuery(rentalNumber);
+        var queryHandler = new RentalForPricingQueryHandler(repository);
+
+        var result = await queryHandler.Handle(query);
+
+        result.Success.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task Should_CalculateMileage_WithNoRounding()
     {
         const string rentalNumber = "rental number";
@@ -26,7 +65,8 @@ public class RentalForPricingQueryHandlerTests
 
         var result = await queryHandler.Handle(query);
 
-        result.Mileage.Should().Be(9.2m);
+        result.Success.Should().BeTrue();
+        result.Result!.Mileage.Should().Be(9.2m);
     }
 
     [Theory]
@@ -48,6 +88,7 @@ public class RentalForPricingQueryHandlerTests
 
         var result = await queryHandler.Handle(query);
 
-        result.Days.Should().Be(expected);
+        result.Success.Should().BeTrue();
+        result.Result!.Days.Should().Be(expected);
     }
 }

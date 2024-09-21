@@ -23,7 +23,7 @@ public record ExecutionResult<T>
         return new ExecutionResult<T>(true, result);
     }
 
-    public static ExecutionResult<T> ForFailure<T>(List<string> errors)
+    public static ExecutionResult<T> ForFailure(List<string> errors)
     {
         return new ExecutionResult<T>(false, errors);
     }
