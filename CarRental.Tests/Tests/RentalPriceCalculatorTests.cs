@@ -1,4 +1,4 @@
-namespace CarRental.Tests;
+namespace CarRental.Tests.Tests;
 
 public class RentalPriceCalculatorTests
 {

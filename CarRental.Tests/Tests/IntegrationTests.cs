@@ -8,7 +8,7 @@ using CarRental.Domain.Services;
 using CarRental.Tests.Helpers;
 using FluentAssertions;
 
-namespace CarRental.Tests;
+namespace CarRental.Tests.Tests;
 
 public class IntegrationTests
 {
