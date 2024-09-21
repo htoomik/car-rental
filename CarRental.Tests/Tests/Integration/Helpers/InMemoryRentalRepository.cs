@@ -18,7 +18,7 @@ public class InMemoryRentalRepository : IRentalRepository
         _storage[rental.RentalNumber] = rental;
     }
 
-    public async Task<Rental> GetByRentalNumber(string rentalNumber)
+    public async Task<Rental?> GetByRentalNumber(string rentalNumber)
     {
         return _storage[rentalNumber];
     }
