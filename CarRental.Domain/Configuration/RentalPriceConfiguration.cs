@@ -1,3 +1,5 @@
 namespace CarRental.Domain.Configuration;
 
-public record RentalPriceConfiguration();
+public record RentalPriceConfiguration(
+    decimal BaseDailyRate,
+    decimal BaseMileageRate);

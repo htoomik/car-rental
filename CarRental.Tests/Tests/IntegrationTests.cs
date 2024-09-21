@@ -34,7 +34,7 @@ public class IntegrationTests
         var rentalForPricing = await queryHandler.Handle(query);
 
         var calculator = new RentalPriceCalculator();
-        var priceConfiguration = new RentalPriceConfiguration();
+        var priceConfiguration = new RentalPriceConfiguration(2, 3);
         var price = calculator.Calculate(rentalForPricing, priceConfiguration);
 
         // Calculation details are tested separately
