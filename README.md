@@ -17,7 +17,7 @@ The system has been implemented as a class library, making it platform-agnostic.
 It could be used with a REST API in front of it, or a desktop GUI, or a console application.
 
 The system also makes no assumptions regarding persistence technology for storing the data about rentals. Client code 
-needs to provide an implementation of IRentalRepository, which could be implemented using any suitable database provider.
+needs to provide an implementation of `IRentalRepository`, which could be implemented using any suitable database provider.
 
 An integration test using a simple in-memory implementation of the persistence layer demonstrates usage of the class
 library in a sample scenario.
@@ -25,10 +25,10 @@ library in a sample scenario.
 ## Extensibility and configurability
 
 **New categories**:
-More categories can easily be added by adding new enum values and corresponding implementations of IPricingStrategy.
+More categories can easily be added by adding new enum values and corresponding implementations of `IPricingStrategy`.
 
 **Pricing parameters:**
-Pricing parameters are configurable through the PricingConfiguration class, allowing each client to apply their own 
+Pricing parameters are configurable through the `PricingConfiguration` class, allowing each client to apply their own 
 prices. Prices could be configured in a config file or a database.
 
 ## Assumptions regarding business rules
