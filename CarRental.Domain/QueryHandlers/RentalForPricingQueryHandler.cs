@@ -13,6 +13,12 @@ public class RentalForPricingQueryHandler(ILogger<RentalForPricingQueryHandler> 
         {
             var rental = await repository.GetByRentalNumber(query.RentalNumber);
 
+            if (rental == null)
+            {
+                return ExecutionResult<RentalForPricing>.ForFailure(
+                    [$"Rental with rental number {query.RentalNumber} not found"]);
+            }
+
             if (rental.TimeAtEnd == null)
             {
                 return ExecutionResult<RentalForPricing>.ForFailure(

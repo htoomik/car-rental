@@ -95,4 +95,27 @@ public class EndRentalCommandHandlerTests
         result.Errors.Count.Should().Be(1);
         result.Errors.Single().Should().Contain("mileage");
     }
+
+    [Fact]
+    public async void When_RentalNotFound_Should_ReturnFailure()
+    {
+        const string rentalNumber = "rental";
+        var timeAtEnd = new DateTime(2024, 09, 07);
+        const decimal mileageAtEnd = 5;
+
+        var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
+        var repository = Substitute.For<IRentalRepository>();
+        var validator = Substitute.For<IValidator<EndRentalCommand>>();
+        var handler = new EndRentalCommandHandler(logger, repository, validator);
+
+        repository.GetByRentalNumber(null!).ReturnsForAnyArgs((Rental?)null);
+        validator.ValidateAsync(null!).ReturnsForAnyArgs(new ValidationResult());
+
+        var result = await handler.Handle(new EndRentalCommand(rentalNumber, timeAtEnd, mileageAtEnd));
+
+        result.Success.Should().BeFalse();
+        result.Errors.Count.Should().Be(1);
+        result.Errors.Single().Should().Contain("not found");
+        result.Errors.Single().Should().Contain(rentalNumber);
+    }
 }

@@ -1,6 +1,7 @@
 using CarRental.Domain.Commands;
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Persistence.Models;
+using CarRental.Domain.QueryResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -24,14 +25,20 @@ public class EndRentalCommandHandler(
 
             var rental = await repository.GetByRentalNumber(command.RentalNumber);
 
-            rental.TimeAtEnd = command.Timestamp;
-            rental.MileageAtEnd = command.Mileage;
+            if (rental == null)
+            {
+                return ExecutionResult.ForFailure(
+                    [$"Rental with rental number {command.RentalNumber} not found"]);
+            }
 
             var isValid = Validate(command, rental, out var errors);
             if (!isValid)
             {
                 return ExecutionResult.ForFailure(errors);
             }
+
+            rental.TimeAtEnd = command.Timestamp;
+            rental.MileageAtEnd = command.Mileage;
 
             await repository.Update(rental);
 

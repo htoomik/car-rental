@@ -12,6 +12,26 @@ namespace CarRental.Tests.Tests.QueryHandlers;
 public class RentalForPricingQueryHandlerTests
 {
     [Fact]
+    public async Task When_RentalNotFound_Should_ReturnFailure()
+    {
+        const string rentalNumber = "rental number";
+
+        var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
+        var repository = Substitute.For<IRentalRepository>();
+        repository.GetByRentalNumber(null!).ReturnsForAnyArgs((Rental?)null);
+
+        var query = new RentalForPricingQuery(rentalNumber);
+        var queryHandler = new RentalForPricingQueryHandler(logger, repository);
+
+        var result = await queryHandler.Handle(query);
+
+        result.Success.Should().BeFalse();
+        result.Errors.Count.Should().Be(1);
+        result.Errors.Single().Should().Contain("not found");
+        result.Errors.Single().Should().Contain(rentalNumber);
+    }
+
+    [Fact]
     public async Task When_EndTimeMissing_Should_ReturnFailure()
     {
         const string rentalNumber = "rental number";
@@ -30,6 +50,8 @@ public class RentalForPricingQueryHandlerTests
         var result = await queryHandler.Handle(query);
 
         result.Success.Should().BeFalse();
+        result.Errors.Count.Should().Be(1);
+        result.Errors.Single().Should().Contain("end time");
     }
 
     [Fact]
@@ -50,6 +72,8 @@ public class RentalForPricingQueryHandlerTests
         var result = await queryHandler.Handle(query);
 
         result.Success.Should().BeFalse();
+        result.Errors.Count.Should().Be(1);
+        result.Errors.Single().Should().Contain("end mileage");
     }
 
     [Fact]

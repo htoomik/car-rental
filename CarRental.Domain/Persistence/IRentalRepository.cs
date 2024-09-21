@@ -6,5 +6,5 @@ public interface IRentalRepository
 {
     Task Add(Rental rental);
     Task Update(Rental rental);
-    Task<Rental> GetByRentalNumber(string rentalNumber);
+    Task<Rental?> GetByRentalNumber(string rentalNumber);
 }
