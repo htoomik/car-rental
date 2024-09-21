@@ -27,8 +27,8 @@ public class StartRentalCommandHandler(
                 registrationNumber: command.RegistrationNumber,
                 clientIdentifier: command.ClientIdentifier,
                 category: command.Category,
-                timeAtStart: command.Timestamp,
-                mileageAtStart: command.Mileage);
+                startTime: command.Timestamp,
+                startMileage: command.Mileage);
             await repository.Add(model);
 
             return ExecutionResult.ForSuccess();

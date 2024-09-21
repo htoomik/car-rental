@@ -18,10 +18,10 @@ public class EndRentalCommandValidatorTests
     [ClassData(typeof(ValidTestData))]
     public void When_Valid_Should_ReturnTrue(
         string rentalNumber,
-        DateTime timeAtEnd,
-        decimal mileageAtEnd)
+        DateTime endTime,
+        decimal endMileage)
     {
-        var command = new EndRentalCommand(rentalNumber, timeAtEnd, mileageAtEnd);
+        var command = new EndRentalCommand(rentalNumber, endTime, endMileage);
         var validator = new EndRentalCommandValidator(TimeProvider.System);
         var result = validator.Validate(command);
 
@@ -46,11 +46,11 @@ public class EndRentalCommandValidatorTests
     [ClassData(typeof(InvalidTestData))]
     public void When_Invalid_Should_ReturnFalse(
         string rentalNumber,
-        DateTime timeAtEnd,
-        decimal mileageAtEnd,
+        DateTime endTime,
+        decimal endMileage,
         string description)
     {
-        var command = new EndRentalCommand(rentalNumber, timeAtEnd, mileageAtEnd);
+        var command = new EndRentalCommand(rentalNumber, endTime, endMileage);
         var validator = new EndRentalCommandValidator(TimeProvider.System);
         var result = validator.Validate(command);
 

@@ -51,10 +51,10 @@ public class EndRentalCommandHandlerTests
     [Fact]
     public async void When_DateValidationFails_Should_ReturnFailureWithErrors()
     {
-        var timeAtStart = new DateTime(2024, 09, 01);
-        var timeAtEnd = new DateTime(2024, 08, 01); // Before timeAtStart = invalid
-        const decimal mileageAtStart = 10;
-        const decimal mileageAtEnd = 20;
+        var startTime = new DateTime(2024, 09, 01);
+        var endTime = new DateTime(2024, 08, 01); // Before start time = invalid
+        const decimal startMileage = 10;
+        const decimal endMileage = 20;
 
         var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
@@ -62,10 +62,10 @@ public class EndRentalCommandHandlerTests
         var handler = new EndRentalCommandHandler(logger, repository, validator);
 
         repository.GetByRentalNumber(null!)
-            .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, timeAtStart, null, mileageAtStart, null));
+            .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, startTime, null, startMileage, null));
         validator.ValidateAsync(null!).ReturnsForAnyArgs(new ValidationResult());
 
-        var result = await handler.Handle(new EndRentalCommand("", timeAtEnd, mileageAtEnd));
+        var result = await handler.Handle(new EndRentalCommand("", endTime, endMileage));
 
         result.Success.Should().BeFalse();
         result.Errors.Count.Should().Be(1);
@@ -75,10 +75,10 @@ public class EndRentalCommandHandlerTests
     [Fact]
     public async void When_MileageValidationFails_Should_ReturnFailureWithErrors()
     {
-        var timeAtStart = new DateTime(2024, 09, 01);
-        var timeAtEnd = new DateTime(2024, 09, 07);
-        const decimal mileageAtStart = 10;
-        const decimal mileageAtEnd = 5; // Smaller than mileage at start = invalid
+        var startTime = new DateTime(2024, 09, 01);
+        var endTime = new DateTime(2024, 09, 07);
+        const decimal startMileage = 10;
+        const decimal endMileage = 5; // Smaller than start mileage = invalid
 
         var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
@@ -86,10 +86,10 @@ public class EndRentalCommandHandlerTests
         var handler = new EndRentalCommandHandler(logger, repository, validator);
 
         repository.GetByRentalNumber(null!)
-            .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, timeAtStart, null, mileageAtStart, null));
+            .ReturnsForAnyArgs(new Rental("", "", "", CarCategory.Unknown, startTime, null, startMileage, null));
         validator.ValidateAsync(null!).ReturnsForAnyArgs(new ValidationResult());
 
-        var result = await handler.Handle(new EndRentalCommand("", timeAtEnd, mileageAtEnd));
+        var result = await handler.Handle(new EndRentalCommand("", endTime, endMileage));
 
         result.Success.Should().BeFalse();
         result.Errors.Count.Should().Be(1);
@@ -100,8 +100,8 @@ public class EndRentalCommandHandlerTests
     public async void When_RentalNotFound_Should_ReturnFailure()
     {
         const string rentalNumber = "rental";
-        var timeAtEnd = new DateTime(2024, 09, 07);
-        const decimal mileageAtEnd = 5;
+        var endTime = new DateTime(2024, 09, 07);
+        const decimal endMileage = 5;
 
         var logger = Substitute.For<ILogger<EndRentalCommandHandler>>();
         var repository = Substitute.For<IRentalRepository>();
@@ -111,7 +111,7 @@ public class EndRentalCommandHandlerTests
         repository.GetByRentalNumber(null!).ReturnsForAnyArgs((Rental?)null);
         validator.ValidateAsync(null!).ReturnsForAnyArgs(new ValidationResult());
 
-        var result = await handler.Handle(new EndRentalCommand(rentalNumber, timeAtEnd, mileageAtEnd));
+        var result = await handler.Handle(new EndRentalCommand(rentalNumber, endTime, endMileage));
 
         result.Success.Should().BeFalse();
         result.Errors.Count.Should().Be(1);

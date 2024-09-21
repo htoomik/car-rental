@@ -37,8 +37,8 @@ public class EndRentalCommandHandler(
                 return ExecutionResult.ForFailure(errors);
             }
 
-            rental.TimeAtEnd = command.Timestamp;
-            rental.MileageAtEnd = command.Mileage;
+            rental.EndTime = command.Timestamp;
+            rental.EndMileage = command.Mileage;
 
             await repository.Update(rental);
 
@@ -56,13 +56,13 @@ public class EndRentalCommandHandler(
         var isValid = true;
         errors = [];
 
-        if (command.Timestamp < rental.TimeAtStart)
+        if (command.Timestamp < rental.StartTime)
         {
             isValid = false;
             errors.Add("Rental end date/time must be after rental start");
         }
 
-        if (command.Mileage < rental.MileageAtStart)
+        if (command.Mileage < rental.StartMileage)
         {
             isValid = false;
             errors.Add("Rental end mileage must be greater than mileage at start");

@@ -35,13 +35,13 @@ public class RentalForPricingQueryHandlerTests
     public async Task When_EndTimeMissing_Should_ReturnFailure()
     {
         const string rentalNumber = "rental number";
-        const decimal mileageAtStart = 1.1m;
-        const decimal mileageAtEnd = 10.3m;
+        const decimal startMileage = 1.1m;
+        const decimal endMileage = 10.3m;
 
         var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
-            null, mileageAtStart, mileageAtEnd);
+            null, startMileage, endMileage);
         repository.GetByRentalNumber(null!).ReturnsForAnyArgs(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);
@@ -58,12 +58,12 @@ public class RentalForPricingQueryHandlerTests
     public async Task When_EndMileageMissing_Should_ReturnFailure()
     {
         const string rentalNumber = "rental number";
-        const decimal mileageAtStart = 1.1m;
+        const decimal startMileage = 1.1m;
 
         var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
-            DateTime.MinValue, mileageAtStart, null);
+            DateTime.MinValue, startMileage, null);
         repository.GetByRentalNumber(null!).ReturnsForAnyArgs(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);
@@ -80,13 +80,13 @@ public class RentalForPricingQueryHandlerTests
     public async Task Should_CalculateMileage_WithNoRounding()
     {
         const string rentalNumber = "rental number";
-        const decimal mileageAtStart = 1.1m;
-        const decimal mileageAtEnd = 10.3m;
+        const decimal startMileage = 1.1m;
+        const decimal endMileage = 10.3m;
 
         var logger = Substitute.For<ILogger<RentalForPricingQueryHandler>>();
         var repository = Substitute.For<IRentalRepository>();
         var rental = new Rental(rentalNumber, "reg", "client", CarCategory.Unknown, DateTime.MinValue,
-            DateTime.MinValue, mileageAtStart, mileageAtEnd);
+            DateTime.MinValue, startMileage, endMileage);
         repository.GetByRentalNumber(null!).ReturnsForAnyArgs(rental);
 
         var query = new RentalForPricingQuery(rentalNumber);

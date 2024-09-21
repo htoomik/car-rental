@@ -7,25 +7,25 @@ public class Rental
     public string RegistrationNumber { get; }
     public string ClientIdentifier { get; }
     public CarCategory Category { get; }
-    public DateTime TimeAtStart { get; }
-    public DateTime? TimeAtEnd { get; set; }
-    public decimal MileageAtStart { get; }
-    public decimal? MileageAtEnd { get; set; }
+    public DateTime StartTime { get; }
+    public DateTime? EndTime { get; set; }
+    public decimal StartMileage { get; }
+    public decimal? EndMileage { get; set; }
 
     public Rental(
         string rentalNumber,
         string registrationNumber,
         string clientIdentifier,
         CarCategory category,
-        DateTime timeAtStart,
-        decimal mileageAtStart)
+        DateTime startTime,
+        decimal startMileage)
     {
         RentalNumber = rentalNumber;
         RegistrationNumber = registrationNumber;
         ClientIdentifier = clientIdentifier;
         Category = category;
-        TimeAtStart = timeAtStart;
-        MileageAtStart = mileageAtStart;
+        StartTime = startTime;
+        StartMileage = startMileage;
     }
 
     public Rental(
@@ -33,18 +33,18 @@ public class Rental
         string registrationNumber,
         string clientIdentifier,
         CarCategory category,
-        DateTime timeAtStart,
-        DateTime? timeAtEnd,
-        decimal mileageAtStart,
-        decimal? mileageAtEnd)
+        DateTime startTime,
+        DateTime? endTime,
+        decimal startMileage,
+        decimal? endMileage)
     {
         RentalNumber = rentalNumber;
         RegistrationNumber = registrationNumber;
         ClientIdentifier = clientIdentifier;
         Category = category;
-        TimeAtStart = timeAtStart;
-        TimeAtEnd = timeAtEnd;
-        MileageAtStart = mileageAtStart;
-        MileageAtEnd = mileageAtEnd;
+        StartTime = startTime;
+        EndTime = endTime;
+        StartMileage = startMileage;
+        EndMileage = endMileage;
     }
 }

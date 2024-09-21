@@ -19,20 +19,20 @@ public class RentalForPricingQueryHandler(ILogger<RentalForPricingQueryHandler> 
                     [$"Rental with rental number {query.RentalNumber} not found"]);
             }
 
-            if (rental.TimeAtEnd == null)
+            if (rental.EndTime == null)
             {
                 return ExecutionResult<RentalForPricing>.ForFailure(
                     ["Rental end time must be set before calculating price"]);
             }
 
-            if (rental.MileageAtEnd == null)
+            if (rental.EndMileage == null)
             {
                 return ExecutionResult<RentalForPricing>.ForFailure(
                     ["Rental end mileage must be set before calculating price"]);
             }
 
-            var mileage = rental.MileageAtEnd.Value - rental.MileageAtStart;
-            var days = rental.TimeAtEnd.Value.Date.Subtract(rental.TimeAtStart.Date).Days + 1;
+            var mileage = rental.EndMileage.Value - rental.StartMileage;
+            var days = rental.EndTime.Value.Date.Subtract(rental.StartTime.Date).Days + 1;
 
             var result = new RentalForPricing(rental.Category, mileage, days);
 
