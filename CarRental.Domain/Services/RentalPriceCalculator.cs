@@ -1,5 +1,5 @@
 using CarRental.Domain.Configuration;
-using CarRental.Domain.SQueryResults;
+using CarRental.Domain.QueryResults;
 
 namespace CarRental.Domain.Services;
 

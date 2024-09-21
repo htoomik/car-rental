@@ -1,3 +1,3 @@
 namespace CarRental.Domain.Queries;
 
-public record RentalForPricingQuery(Guid id);
+public record RentalForPricingQuery(string RentalNumber);
