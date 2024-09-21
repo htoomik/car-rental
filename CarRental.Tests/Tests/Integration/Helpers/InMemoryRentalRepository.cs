@@ -1,7 +1,7 @@
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Persistence.Models;
 
-namespace CarRental.Tests.Helpers;
+namespace CarRental.Tests.Tests.Integration.Helpers;
 
 public class InMemoryRentalRepository : IRentalRepository
 {

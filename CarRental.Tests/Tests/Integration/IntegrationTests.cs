@@ -6,7 +6,7 @@ using CarRental.Domain.Configuration;
 using CarRental.Domain.Queries;
 using CarRental.Domain.QueryHandlers;
 using CarRental.Domain.Services;
-using CarRental.Tests.Helpers;
+using CarRental.Tests.Tests.Integration.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
