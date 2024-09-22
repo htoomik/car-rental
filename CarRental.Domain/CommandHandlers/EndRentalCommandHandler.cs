@@ -1,7 +1,7 @@
+using CarRental.Domain.Abstractions;
 using CarRental.Domain.Commands;
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Persistence.Models;
-using CarRental.Domain.QueryResults;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -11,6 +11,7 @@ public class EndRentalCommandHandler(
     ILogger<EndRentalCommandHandler> logger,
     IRentalRepository repository,
     IValidator<EndRentalCommand> validator)
+    : ICommandHandler
 {
     public async Task<ExecutionResult> Handle(EndRentalCommand command)
     {

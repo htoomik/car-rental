@@ -1,15 +1,15 @@
 using CarRental.Domain;
+using CarRental.Domain.Abstractions;
 using CarRental.Domain.CommandHandlers;
 using CarRental.Domain.Commands;
-using CarRental.Domain.CommandValidators;
 using CarRental.Domain.Configuration;
+using CarRental.Domain.DependencyInjection;
+using CarRental.Domain.Persistence;
 using CarRental.Domain.Queries;
 using CarRental.Domain.QueryHandlers;
-using CarRental.Domain.Services;
-using CarRental.Domain.Services.PricingStrategies;
 using CarRental.Tests.Tests.Integration.Helpers;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Xunit.Abstractions;
 
@@ -31,24 +31,22 @@ public class IntegrationTests
         const string rentalStart = "2024-09-01 09:00";
         const string rentalEnd = "2024-09-02 11:00";
 
-        // Dependencies - these would be provided by a service provider in a real implementation
+        var services = new ServiceCollection();
+        services.AddCarRental();
+
         var timeProvider = new FakeTimeProvider();
         timeProvider.SetUtcNow(new DateTimeOffset(2024, 09, 02, 13, 0, 0, TimeSpan.Zero));
+        services.AddSingleton<TimeProvider>(timeProvider);
 
         var repository = new InMemoryRentalRepository();
+        services.AddSingleton<IRentalRepository>(repository);
 
-        var pricingStrategies = new List<IPricingStrategy>
-        {
-            new SmallStrategy(),
-            new StationWagonStrategy(),
-            new TruckStrategy()
-        };
+        services.AddLogging();
+        var serviceProvider = services.BuildServiceProvider();
 
         // Start rental
         var startCommand = CreateStartRentalCommand(rentalNumber, rentalStart);
-        var startValidator = new StartRentalCommandValidator(timeProvider);
-        var startHandler = new StartRentalCommandHandler(
-            NullLogger<StartRentalCommandHandler>.Instance, repository, startValidator);
+        var startHandler = serviceProvider.GetRequiredService<StartRentalCommandHandler>();
         var result = await startHandler.Handle(startCommand);
 
         if (!result.Success)
@@ -59,9 +57,7 @@ public class IntegrationTests
 
         // End rental
         var endCommand = CreateEndRentalCommand(rentalNumber, rentalEnd);
-        var endValidator = new EndRentalCommandValidator(timeProvider);
-        var endHandler = new EndRentalCommandHandler(
-            NullLogger<EndRentalCommandHandler>.Instance, repository, endValidator);
+        var endHandler = serviceProvider.GetRequiredService<EndRentalCommandHandler>();
         var result2 = await endHandler.Handle(endCommand);
 
         if (!result2.Success)
@@ -72,14 +68,13 @@ public class IntegrationTests
 
         // Get data for pricing
         var query = new RentalForPricingQuery(rentalNumber);
-        var queryHandler = new RentalForPricingQueryHandler(
-            NullLogger<RentalForPricingQueryHandler>.Instance, repository);
+        var queryHandler = serviceProvider.GetRequiredService<RentalForPricingQueryHandler>();
         var queryResult = await queryHandler.Handle(query);
         queryResult.Success.Should().BeTrue();
         var rentalForPricing = queryResult.Result!;
 
         // Calculate price
-        var calculator = new RentalPriceCalculator(pricingStrategies);
+        var calculator = serviceProvider.GetRequiredService<IRentalPriceCalculator>();
         var priceConfiguration = new RentalPriceConfiguration(2, 3);
         var price = calculator.Calculate(rentalForPricing, priceConfiguration);
 

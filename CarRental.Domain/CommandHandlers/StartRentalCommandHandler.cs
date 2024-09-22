@@ -1,3 +1,4 @@
+using CarRental.Domain.Abstractions;
 using CarRental.Domain.Commands;
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Persistence.Models;
@@ -10,6 +11,7 @@ public class StartRentalCommandHandler(
     ILogger<StartRentalCommandHandler> logger,
     IRentalRepository repository,
     IValidator<StartRentalCommand> validator)
+    : ICommandHandler
 {
     public async Task<ExecutionResult> Handle(StartRentalCommand command)
     {

@@ -1,10 +1,11 @@
+using CarRental.Domain.Abstractions;
 using CarRental.Domain.Configuration;
 using CarRental.Domain.QueryResults;
 using CarRental.Domain.Services.PricingStrategies;
 
 namespace CarRental.Domain.Services;
 
-public class RentalPriceCalculator(IEnumerable<IPricingStrategy> strategies)
+public class RentalPriceCalculator(IEnumerable<IPricingStrategy> strategies) : IRentalPriceCalculator
 {
     public decimal Calculate(RentalForPricing rental, RentalPriceConfiguration configuration)
     {

@@ -1,4 +1,5 @@
 using CarRental.Domain;
+using CarRental.Domain.Abstractions;
 using CarRental.Domain.Configuration;
 using CarRental.Domain.QueryResults;
 using CarRental.Domain.Services;

@@ -19,8 +19,13 @@ It could be used with a REST API in front of it, or a desktop GUI, or a console 
 The system also makes no assumptions regarding persistence technology for storing the data about rentals. Client code 
 needs to provide an implementation of `IRentalRepository`, which could be implemented using any suitable database provider.
 
+## Usage
+
 An integration test using a simple in-memory implementation of the persistence layer demonstrates usage of the class
 library in a sample scenario.
+
+A helper method (in the `ServiceRegistration` helper class) can be used to register all required domain-specific services.
+Additional services (for logging and for `ITimeProvider`) need to be registered by client code.
 
 ## Extensibility and configurability
 

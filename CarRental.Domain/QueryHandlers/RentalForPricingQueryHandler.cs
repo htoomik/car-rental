@@ -1,3 +1,4 @@
+using CarRental.Domain.Abstractions;
 using CarRental.Domain.Persistence;
 using CarRental.Domain.Queries;
 using CarRental.Domain.QueryResults;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace CarRental.Domain.QueryHandlers;
 
 public class RentalForPricingQueryHandler(ILogger<RentalForPricingQueryHandler> logger, IRentalRepository repository)
+    : IQueryHandler
 {
     public async Task<ExecutionResult<RentalForPricing>> Handle(RentalForPricingQuery query)
     {

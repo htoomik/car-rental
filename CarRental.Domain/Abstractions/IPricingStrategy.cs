@@ -1,7 +1,7 @@
 using CarRental.Domain.Configuration;
 using CarRental.Domain.QueryResults;
 
-namespace CarRental.Domain.Services.PricingStrategies;
+namespace CarRental.Domain.Abstractions;
 
 public interface IPricingStrategy
 {
